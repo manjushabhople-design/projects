@@ -1,7 +1,16 @@
 pipeline{
     agent any
+
+    def branches = []
+    def gitBranches = sh(script: "git branch -r", returnStdout: true).trim()
+    gitBranches.eachLine { line ->
+    def branch = line.trim().replaceAll("origin/", "")
+    branches.add(branch)
+    }
+return branches
+
     parameters {
-        choice(name: 'ENV', choices: ['dev', 'test', 'prod', 'feature'], description: 'Select Environment')
+        choice(name: 'BRANCH', choices: ['dev', 'test', 'prod', 'feature'], description: 'Select Environment')
     }   
     environment {
         AWS_IAM_CREDS = 'aws-iam-creds' // Replace with your credential ID
