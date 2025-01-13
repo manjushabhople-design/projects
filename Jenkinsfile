@@ -65,5 +65,30 @@ pipeline{
 
 }
 
+       stage("push docker image"){
+        when {
+            branch 'feature/*'
+            }
+            steps {
+                script{
+                    sshagent(['ec2-creds']) {
+                        sh '''
+                            ssh -o StrictHostKeyChecking=no ubuntu@52.87.187.234
+                                if sudo docker ps -a | grep -q "chat-app"; then
+                                    echo "docker container found. Stopping..."
+                                        sudo docker stop "chat-app" && sudo docker rm "chat-app"
+                                    echo "docker container stopped"
+                                fi
+
+                                    sudo docker run --name chat-app \
+                                    -p 8081:8080
+
+                        '''
+                    }
+                }
+
+            }
+        }
+
 }
 }
