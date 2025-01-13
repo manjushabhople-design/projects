@@ -10,7 +10,7 @@ pipeline{
     }
      tools {
           jdk 'java'
-          maven 'maven'
+          maven 'maven' // maven version
         }
 
     stages{
