@@ -65,7 +65,7 @@ pipeline{
 
 }
 
-       stage("push docker image"){
+       stage("deploy app on ec2"){
         when {
             branch 'feature/*'
             }
