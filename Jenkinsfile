@@ -44,20 +44,22 @@ pipeline{
             steps {
                 sh '''
                     echo $USER
-                    //docker build -t manjusha143/chatapp:${BUILD_NUMBER} .
-                    docker build -t dev/images/chatapp:${BUILD_NUMBER} .
+                    docker build -t dev/chatapp:${BUILD_NUMBER} .
                 '''
             }
 
         }
         stage("push docker image"){
             steps {
-                withAWS(credentials: AWS_IAM_CREDS, region: AWS_REGION)
+                withAWS(credentials: AWS_IAM_CREDS, region: AWS_REGION){
                 script{
                 sh '''
-                    docker push 307946649652.dkr.ecr.us-east-1.amazonaws.com/dev/images/chatapp:${BUILD_NUMBER}
+                    aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 307946649652.dkr.ecr.us-east-1.amazonaws.com
+                    docker tag dev/chatapp:${BUILD_NUMBER} 307946649652.dkr.ecr.us-east-1.amazonaws.com/dev/chatapp:${BUILD_NUMBER}
+                    docker push 307946649652.dkr.ecr.us-east-1.amazonaws.com/dev/chatapp:${BUILD_NUMBER}
                 '''
             }
+                }
 
         }
 
