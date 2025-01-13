@@ -1,9 +1,6 @@
 
 pipeline{
-    agent any
-    parameters {
-        choice(name: 'BRANCH', choices: ['dev', 'test', 'prod', 'feature/chatapp'], description: 'Select Environment')
-    }   
+    agent any  
     environment {
         AWS_IAM_CREDS = 'aws-iam-creds' // Replace with your credential ID
         AWS_REGION = 'us-east-1'  // Replace with the appropriate AWS region
@@ -61,36 +58,10 @@ pipeline{
                     docker tag dev/chatapp:${BUILD_NUMBER} 307946649652.dkr.ecr.us-east-1.amazonaws.com/dev/chatapp:${BUILD_NUMBER}
                     docker push 307946649652.dkr.ecr.us-east-1.amazonaws.com/dev/chatapp:${BUILD_NUMBER}
                 '''
-            }
-                }
-
-        }
-
-}
-
-       stage("deploy app on ec2"){
-        when {
-            branch 'feature/*'
-            }
-            steps {
-                script{
-                    sshagent(['ec2-creds']) {
-                        sh '''
-                            ssh -o StrictHostKeyChecking=no ubuntu@52.87.187.234
-                                if sudo docker ps -a | grep -q "chat-app"; then
-                                    echo "docker container found. Stopping..."
-                                        sudo docker stop "chat-app" && sudo docker rm "chat-app"
-                                    echo "docker container stopped"
-                                fi
-
-                                    sudo docker run --name chat-app \
-                                    -p 8081:8080
-
-                        '''
                     }
                 }
 
-            }
+             }
         }
 
 }
